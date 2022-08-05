@@ -3,6 +3,7 @@ package com.conch.wanandroid
 import android.app.Application
 import android.view.View
 import com.conch.wanandroid.constants.Api
+import com.conch.wanandroid.utils.log.LogCat
 import com.conch.wanandroid.utils.net.MoshiConvert
 import com.drake.net.NetConfig
 import com.drake.net.interceptor.LogRecordInterceptor
@@ -13,6 +14,7 @@ import com.drake.net.okhttp.setDebug
 import com.drake.net.okhttp.setErrorHandler
 import com.drake.net.okhttp.setRequestInterceptor
 import com.drake.net.request.BaseRequest
+import com.hjq.toast.ToastUtils
 import java.util.concurrent.TimeUnit
 
 /**
@@ -23,6 +25,12 @@ class WanAndroidApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initLib()
+    }
+
+    private fun initLib() {
+        LogCat.setDebug(BuildConfig.DEBUG, "wanandroid")
+        initToast()
         initNet()
     }
 
@@ -54,6 +62,12 @@ class WanAndroidApp : Application() {
                 }
             })
         }
+    }
+
+    // 初始化 Toast
+    private fun initToast() {
+        ToastUtils.init(this)
+        ToastUtils.setDebugMode(BuildConfig.DEBUG)
     }
 
 }
