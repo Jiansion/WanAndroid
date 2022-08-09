@@ -19,8 +19,8 @@ class LoginAndRegisterRepository(private val scope: CoroutineScope) {
      * @param username 账号
      * @param password 密码
      */
-    suspend fun login(username: String, password: String) {
-        scope.Post<BaseResponse<UserModel>>(Api.LOGIN_URL) {
+    suspend fun login(username: String, password: String): BaseResponse<UserModel> {
+        return scope.Post<BaseResponse<UserModel>>(Api.LOGIN_URL) {
             param("username", username)
             param("password", password)
         }.await()

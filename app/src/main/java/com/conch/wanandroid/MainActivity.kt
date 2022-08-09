@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.btnLog.setOnClickListener {
             LogCat.i("登录请求")
-            loginAndRegisterViewModel.login("dasi_ye","dasi_ye_")
+            loginAndRegisterViewModel.login("dasi_ye", "dasi_ye_")
         }
 
         binding.btnToast.setOnClickListener {
