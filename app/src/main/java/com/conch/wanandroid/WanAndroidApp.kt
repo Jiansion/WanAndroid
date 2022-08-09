@@ -4,16 +4,14 @@ import android.app.Application
 import android.view.View
 import com.conch.wanandroid.constants.Api
 import com.conch.wanandroid.utils.log.LogCat
-import com.conch.wanandroid.utils.net.MoshiConvert
+import com.conch.wanandroid.utils.net.*
 import com.drake.net.NetConfig
 import com.drake.net.interceptor.LogRecordInterceptor
-import com.drake.net.interceptor.RequestInterceptor
 import com.drake.net.interfaces.NetErrorHandler
 import com.drake.net.okhttp.setConverter
 import com.drake.net.okhttp.setDebug
 import com.drake.net.okhttp.setErrorHandler
-import com.drake.net.okhttp.setRequestInterceptor
-import com.drake.net.request.BaseRequest
+import com.drake.net.okhttp.trustSSLCertificate
 import com.hjq.toast.ToastUtils
 import java.util.concurrent.TimeUnit
 
@@ -23,8 +21,14 @@ import java.util.concurrent.TimeUnit
  */
 class WanAndroidApp : Application() {
 
+    companion object {
+        lateinit var INSTANCE: WanAndroidApp
+            private set
+    }
+
     override fun onCreate() {
         super.onCreate()
+        INSTANCE = this
         initLib()
     }
 
@@ -40,20 +44,30 @@ class WanAndroidApp : Application() {
             connectTimeout(2, TimeUnit.MINUTES)
             readTimeout(2, TimeUnit.MINUTES)
             writeTimeout(2, TimeUnit.MINUTES)
+            cookieJar(LoginCookieJar()) // 添加Cookie
             setDebug(BuildConfig.DEBUG)
             setConverter(MoshiConvert())
+            trustSSLCertificate()
             addInterceptor(LogRecordInterceptor(BuildConfig.DEBUG))  // 日志打印拦截器
-
-            setRequestInterceptor(object : RequestInterceptor {
-                override fun interceptor(request: BaseRequest) {
-                    // 添加通用请求头 等操作
-                }
-            })
-
             setErrorHandler(object : NetErrorHandler {
                 // 网络请求抛出的异常
                 override fun onError(e: Throwable) {
                     e.printStackTrace()
+
+                    if (e is UnknownResponseException) {
+                        ToastUtils.show(e.message)
+                        return
+                    }
+                    if (e is BusinessResponseException) {
+                        ToastUtils.show(e.message)
+                        return
+                    }
+
+                    if (e is UserTokenExpireException) {
+                        // TODO token 过期，退回登录页提示用户登录
+                        ToastUtils.show(e.message)
+                        return
+                    }
                 }
 
                 // 使用缺省页作用域时抛出的的异常

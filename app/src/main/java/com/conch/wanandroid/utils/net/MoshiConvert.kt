@@ -1,5 +1,6 @@
 package com.conch.wanandroid.utils.net
 
+import com.conch.wanandroid.constants.ResponseCodeConstants
 import com.drake.net.convert.NetConverter
 import com.drake.net.exception.ConvertException
 import com.drake.net.exception.RequestParamsException
@@ -8,6 +9,7 @@ import com.drake.net.response.file
 import com.squareup.moshi.Moshi
 import okhttp3.Response
 import okio.ByteString
+import org.json.JSONObject
 import java.io.File
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.Type
@@ -29,17 +31,38 @@ class MoshiConvert : NetConverter {
                 when {
                     code in 200..299 -> {
                         val bodyString = response.body?.string() ?: return null
-                        return convertResponse(succeed, bodyString)
+                        val codeAndMsg = getResponseCodeAndMsg(bodyString)
+                        when (codeAndMsg.first) {
+                            ResponseCodeConstants.CODE_SUCCESS -> {
+                                return convertResponse(succeed, bodyString)
+                            }
+
+                            // 登录信息过期
+                            ResponseCodeConstants.CODE_USER_TOKEN_EXPIRE -> {
+                                throw UserTokenExpireException(response, "登录信息已过期")
+                            }
+
+                            // 未知响应结果
+                            ResponseCodeConstants.CODE_UNKNOWN -> {
+                                throw UnknownResponseException(response, codeAndMsg.second)
+                            }
+
+                            // 请求结果业务异常
+                            else -> {
+                                throw BusinessResponseException(response, codeAndMsg.second)
+                            }
+                        }
                     }
-                    code in 400..499 -> throw RequestParamsException(
-                        response,
-                        code.toString()
-                    )
-                    code >= 500 -> throw ServerResponseException(
-                        response,
-                        code.toString()
-                    )
-                    else -> throw ConvertException(response)
+                    code in 400..499 -> {
+                        throw RequestParamsException(response, code.toString())
+                    }
+
+                    code >= 500 -> {
+                        throw ServerResponseException(response, code.toString())
+                    }
+                    else -> {
+                        throw ConvertException(response)
+                    }
                 }
             }
         }
@@ -54,4 +77,14 @@ class MoshiConvert : NetConverter {
         }
     }
 
+    private fun getResponseCodeAndMsg(bodyString: String): Pair<Int, String> {
+        return try {
+            val json = JSONObject(bodyString)
+            val msg = json.getString("errorMsg")
+            val code = json.getInt("errorCode")
+            Pair(code, msg)
+        } catch (e: Exception) {
+            Pair(ResponseCodeConstants.CODE_UNKNOWN, "未知响应结果")
+        }
+    }
 }
