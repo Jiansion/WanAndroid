@@ -1,12 +1,10 @@
 package com.conch.wanandroid
 
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.junit.Assert.*
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -16,9 +14,25 @@ import org.junit.Assert.*
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
     @Test
-    fun useAppContext() {
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.conch.wanandroid", appContext.packageName)
+    fun textFlow() {
+        runBlocking {
+            makeFlow().collect { data ->
+                println("receive $data")
+            }
+            println("run end")
+        }
+    }
+
+
+    private fun makeFlow() = flow {
+        println("send 1")
+        emit(1)
+        println("send 2")
+        emit(2)
+        println("send 2 again")
+        emit(2)
+        println("send 3")
+        emit(3)
+        println("发送结束")
     }
 }

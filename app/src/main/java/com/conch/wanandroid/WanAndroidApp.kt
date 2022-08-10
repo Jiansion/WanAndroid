@@ -13,12 +13,14 @@ import com.drake.net.okhttp.setDebug
 import com.drake.net.okhttp.setErrorHandler
 import com.drake.net.okhttp.trustSSLCertificate
 import com.hjq.toast.ToastUtils
+import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
 
 /**
  * @author YeJain
  * @date 2022/8/5 14:18
  */
+@HiltAndroidApp
 class WanAndroidApp : Application() {
 
     companion object {
