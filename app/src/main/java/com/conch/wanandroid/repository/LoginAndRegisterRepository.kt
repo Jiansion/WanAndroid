@@ -5,13 +5,16 @@ import com.conch.wanandroid.constants.Api
 import com.conch.wanandroid.model.UserModel
 import com.drake.net.Get
 import com.drake.net.Post
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * @author YeJain
  * @date 2022/8/8 11:18
  */
-class LoginAndRegisterRepository(private val scope: CoroutineScope) {
+class LoginAndRegisterRepository(private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default) {
 
 
     /**
@@ -19,18 +22,19 @@ class LoginAndRegisterRepository(private val scope: CoroutineScope) {
      * @param username 账号
      * @param password 密码
      */
-    suspend fun login(username: String, password: String): BaseResponse<UserModel> {
-        return scope.Post<BaseResponse<UserModel>>(Api.LOGIN_URL) {
+    suspend fun login(username: String, password: String) = withContext(defaultDispatcher) {
+        Post<BaseResponse<UserModel>>(Api.LOGIN_URL) {
             param("username", username)
             param("password", password)
         }.await()
     }
 
+
     /**
      * 退出登录,退出成功后 清除 cookie,和当前用户数据
      */
-    suspend fun logout() {
-        scope.Get<BaseResponse<String>>(Api.LOGOUT_URL).await()
+    suspend fun logout() = withContext(defaultDispatcher) {
+        Get<BaseResponse<String>>(Api.LOGOUT_URL).await()
     }
 
     /**
@@ -39,13 +43,12 @@ class LoginAndRegisterRepository(private val scope: CoroutineScope) {
      * @param password 密码
      * @param repassword 重试密码
      */
-    suspend fun register(username: String, password: String, repassword: String = password) {
-        scope.Post<BaseResponse<UserModel>>(Api.REGISTER_URL) {
-            param("username", username)
-            param("password", password)
-            param("repassword", repassword)
-        }.await()
-    }
-
-
+    suspend fun register(username: String, password: String, repassword: String = password) =
+        withContext(defaultDispatcher) {
+            Post<BaseResponse<UserModel>>(Api.REGISTER_URL) {
+                param("username", username)
+                param("password", password)
+                param("repassword", repassword)
+            }.await()
+        }
 }

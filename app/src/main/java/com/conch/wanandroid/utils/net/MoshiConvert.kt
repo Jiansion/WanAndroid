@@ -33,10 +33,6 @@ class MoshiConvert : NetConverter {
                         val bodyString = response.body?.string() ?: return null
                         val codeAndMsg = getResponseCodeAndMsg(bodyString)
                         when (codeAndMsg.first) {
-                            ResponseCodeConstants.CODE_SUCCESS -> {
-                                return convertResponse(succeed, bodyString)
-                            }
-
                             // 登录信息过期
                             ResponseCodeConstants.CODE_USER_TOKEN_EXPIRE -> {
                                 throw UserTokenExpireException(response, "登录信息已过期")
@@ -49,7 +45,7 @@ class MoshiConvert : NetConverter {
 
                             // 请求结果业务异常
                             else -> {
-                                throw BusinessResponseException(response, codeAndMsg.second)
+                                return convertResponse(succeed, bodyString)
                             }
                         }
                     }

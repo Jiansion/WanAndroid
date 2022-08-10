@@ -58,10 +58,6 @@ class WanAndroidApp : Application() {
                         ToastUtils.show(e.message)
                         return
                     }
-                    if (e is BusinessResponseException) {
-                        ToastUtils.show(e.message)
-                        return
-                    }
 
                     if (e is UserTokenExpireException) {
                         // TODO token 过期，退回登录页提示用户登录
