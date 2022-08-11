@@ -10,10 +10,9 @@ import com.conch.wanandroid.databinding.ActivityMainBinding
 import com.conch.wanandroid.utils.log.LogCat
 import com.conch.wanandroid.viewmodel.LoginAndRegisterViewModel
 import com.hjq.toast.ToastUtils
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
+
 class MainActivity : AppCompatActivity() {
 
     private val loginAndRegisterViewModel by viewModels<LoginAndRegisterViewModel>()

@@ -16,7 +16,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         val db =
-            Room.databaseBuilder(WanAndroidApp.INSTANCE, AppDatabase::class.java, "wanandroid_db").build()
+            Room.databaseBuilder(WanAndroidApp.INSTANCE, AppDatabase::class.java, "wanandroid.db").build()
     }
 
     abstract fun cookieDao(): CookieDao
