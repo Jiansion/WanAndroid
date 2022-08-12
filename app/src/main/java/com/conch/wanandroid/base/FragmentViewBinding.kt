@@ -14,13 +14,13 @@ import kotlin.reflect.KProperty
  * @date 2022/8/9 17:09
  * Fragment 使用 ViewBinding 简化操作
  */
-class FragmentViewBinding<F : Fragment, V : ViewBinding>(
-    private val bindingCreator: (F) -> V
-) : ReadOnlyProperty<F, V>, LifecycleEventObserver {
+class FragmentViewBinding<V : ViewBinding>(
+    private val bindingCreator: () -> V
+) : ReadOnlyProperty<Fragment, V>, LifecycleEventObserver {
 
     private var binding: V? = null
 
-    override fun getValue(thisRef: F, property: KProperty<*>): V {
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): V {
         binding?.let {
             return it
         }
@@ -31,7 +31,7 @@ class FragmentViewBinding<F : Fragment, V : ViewBinding>(
             throw  IllegalStateException("不能在 onDestroyView 之后进行绑定")
         } else {
             lifecycle.addObserver(this)
-            val viewBinding = bindingCreator.invoke(thisRef)
+            val viewBinding = bindingCreator.invoke()
             this.binding = viewBinding
             return viewBinding
         }
@@ -46,6 +46,6 @@ class FragmentViewBinding<F : Fragment, V : ViewBinding>(
     }
 }
 
-fun <V : ViewBinding> Fragment.viewBinding(binder: (View) -> V): FragmentViewBinding<Fragment, V> {
-    return FragmentViewBinding { binder.invoke(it.requireView()) }
+fun <V : ViewBinding> Fragment.viewBinding(binder: (View) -> V): FragmentViewBinding<V> {
+    return FragmentViewBinding { binder.invoke(this.requireView()) }
 }

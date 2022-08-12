@@ -8,6 +8,7 @@ import com.conch.wanandroid.utils.net.LoginCookieJar
 import com.conch.wanandroid.utils.net.MoshiConvert
 import com.conch.wanandroid.utils.net.UnknownResponseException
 import com.conch.wanandroid.utils.net.UserTokenExpireException
+import com.drake.brv.PageRefreshLayout
 import com.drake.net.NetConfig
 import com.drake.net.interceptor.LogRecordInterceptor
 import com.drake.net.interfaces.NetErrorHandler
@@ -16,6 +17,9 @@ import com.drake.net.okhttp.setDebug
 import com.drake.net.okhttp.setErrorHandler
 import com.drake.net.okhttp.trustSSLCertificate
 import com.hjq.toast.ToastUtils
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.header.MaterialHeader
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import java.util.concurrent.TimeUnit
 
 /**
@@ -39,6 +43,7 @@ class WanAndroidApp : Application() {
         LogCat.setDebug(BuildConfig.DEBUG, "wanandroid")
         initToast()
         initNet()
+        initRefreshLayout()
     }
 
     // 网络初始化
@@ -81,6 +86,12 @@ class WanAndroidApp : Application() {
     private fun initToast() {
         ToastUtils.init(this)
         ToastUtils.setDebugMode(BuildConfig.DEBUG)
+    }
+
+    private fun initRefreshLayout() {
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator { _, _ -> MaterialHeader(this) }
+        SmartRefreshLayout.setDefaultRefreshFooterCreator { _, _ -> ClassicsFooter(this) }
+        PageRefreshLayout.startIndex = 0
     }
 
 }

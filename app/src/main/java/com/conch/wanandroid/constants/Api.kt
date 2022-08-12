@@ -26,6 +26,11 @@ object Api {
 
 
     /**
+     * 获取Banner数据
+     */
+    const val BANNER_URL = "banner/json"
+
+    /**
      * 获取首页列表数据
      * @param index 页码，从 0 开始
      */

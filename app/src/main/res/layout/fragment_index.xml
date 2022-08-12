@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.drake.brv.PageRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pageRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:empty_layout="@layout/rv_empty"
+    app:error_layout="@layout/rv_load_error"
+    app:loading_layout="@layout/rv_loading">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</com.drake.brv.PageRefreshLayout>

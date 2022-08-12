@@ -1,5 +1,7 @@
 package com.conch.wanandroid.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.scopeNetLife
 import com.conch.wanandroid.base.BaseResponse
@@ -15,8 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 class LoginAndRegisterViewModel : ViewModel() {
     private val repository: LoginAndRegisterRepository = LoginAndRegisterRepository()
 
-    private val _loginResult = MutableStateFlow<BaseResponse<UserModel>>(BaseResponse())
-    val loginResult: StateFlow<BaseResponse<UserModel>> = _loginResult
+    private val _loginResult = MutableLiveData<BaseResponse<UserModel>>()
+    val loginResult: LiveData<BaseResponse<UserModel>> = _loginResult
 
     fun login(account: String, password: String) {
         scopeNetLife {

@@ -1,42 +1,27 @@
 package com.conch.wanandroid
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.conch.wanandroid.databinding.ActivityMainBinding
-import com.conch.wanandroid.utils.log.LogCat
-import com.conch.wanandroid.viewmodel.LoginAndRegisterViewModel
-import com.hjq.toast.ToastUtils
-import kotlinx.coroutines.launch
+import com.conch.wanandroid.ui.index.IndexFragment
 
 
 class MainActivity : AppCompatActivity() {
-
-    private val loginAndRegisterViewModel by viewModels<LoginAndRegisterViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.btnLog.setOnClickListener {
-            LogCat.i("登录请求")
-            loginAndRegisterViewModel.login("dasi_ye", "dasi_ye_")
-        }
 
-        binding.btnToast.setOnClickListener {
-            ToastUtils.show("hahahahah")
-        }
+        supportFragmentManager
+            .beginTransaction()
+            .replace(binding.container.id, IndexFragment())
+            .commit()
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginAndRegisterViewModel.loginResult.collect { data ->
-                    LogCat.i(data)
-                }
-            }
-        }
+    }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
     }
 }
