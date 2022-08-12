@@ -12,6 +12,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "wa
 /**
  * @author YeJain
  * @date 2022/8/8 12:11
+ * 数据持久化操作工具
  */
 class PreferenceDataStoreUtil(private val context: Context) {
 

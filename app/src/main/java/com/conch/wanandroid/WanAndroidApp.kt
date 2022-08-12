@@ -3,6 +3,7 @@ package com.conch.wanandroid
 import android.app.Application
 import android.view.View
 import com.conch.wanandroid.constants.Api
+import com.conch.wanandroid.utils.WebViewPool
 import com.conch.wanandroid.utils.log.LogCat
 import com.conch.wanandroid.utils.net.LoginCookieJar
 import com.conch.wanandroid.utils.net.MoshiConvert
@@ -44,6 +45,7 @@ class WanAndroidApp : Application() {
         initToast()
         initNet()
         initRefreshLayout()
+        WebViewPool.prepare(this)
     }
 
     // 网络初始化

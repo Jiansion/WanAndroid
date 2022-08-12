@@ -12,7 +12,9 @@ import com.conch.wanandroid.databinding.FragmentIndexBinding
 import com.conch.wanandroid.ext.dp
 import com.conch.wanandroid.model.BannerItemModel
 import com.conch.wanandroid.model.IndexItemModel
+import com.conch.wanandroid.ui.content.ContentWebActivity
 import com.conch.wanandroid.viewmodel.IndexViewModel
+import com.drake.brv.BindingAdapter
 import com.drake.brv.utils.divider
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.models
@@ -33,7 +35,7 @@ class IndexFragment : Fragment(R.layout.fragment_index) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
-        bindData()
+        fetchData()
     }
 
     private fun initView() {
@@ -48,30 +50,20 @@ class IndexFragment : Fragment(R.layout.fragment_index) {
                 addType<List<BannerItemModel>>(R.layout.item_banner)
                 onCreate {
                     if (it == R.layout.item_banner) {
-                        findView<BannerViewPager<BannerItemModel>>(R.id.banner).apply {
-                            adapter = BannerAdapter()
-                            setIndicatorGravity(IndicatorGravity.END)
-                            setLifecycleRegistry(lifecycle)
-                        }
+                        createBannerView(this@onCreate)
                     }
                 }
                 onBind {
                     when (itemViewType) {
-                        R.layout.item_news -> {
-                            val model = getModel<IndexItemModel>()
-                            findView<TextView>(R.id.tvAuthor).text = model.shareUser
-                            findView<TextView>(R.id.tvShareTime).text = model.publishTime.toString()
-                            findView<TextView>(R.id.tvTitle).text = model.title
-                        }
-                        R.layout.item_banner -> {
-                            val model = getModel<List<BannerItemModel>>()
-                            findView<BannerViewPager<BannerItemModel>>(R.id.banner).apply {
-                                if (model != data) {
-                                    create(getModel())
-                                }
-                            }
-                        }
+                        R.layout.item_news -> bindNewsData(this@onBind)
+
+                        R.layout.item_banner -> bindBannerData(this@onBind)
                     }
+                }
+
+                onClick(R.id.item, R.id.banner) {
+                    val model = getModel<IndexItemModel>()
+                    ContentWebActivity.startInstance(context, model.title, model.link)
                 }
             }
 
@@ -86,7 +78,41 @@ class IndexFragment : Fragment(R.layout.fragment_index) {
         }
     }
 
-    private fun bindData() {
+    private fun createBannerView(viewHolder: BindingAdapter.BindingViewHolder) {
+        val bannerPage = viewHolder.findView<BannerViewPager<BannerItemModel>>(R.id.banner).apply {
+            adapter = BannerAdapter()
+            setIndicatorGravity(IndicatorGravity.END)
+            setLifecycleRegistry(lifecycle)
+        }
+
+        bannerPage.setOnPageClickListener { _, position ->
+            val model = bannerPage.data[position]
+            ContentWebActivity.startInstance(requireContext(), model.title, model.url)
+        }
+    }
+
+    private fun bindNewsData(viewHolder: BindingAdapter.BindingViewHolder) {
+        viewHolder.run {
+            val model = getModel<IndexItemModel>()
+            findView<TextView>(R.id.tvAuthor).text = model.shareUser
+            findView<TextView>(R.id.tvShareTime).text = model.publishTime.toString()
+            findView<TextView>(R.id.tvTitle).text = model.title
+        }
+    }
+
+    private fun bindBannerData(viewHolder: BindingAdapter.BindingViewHolder) {
+        viewHolder.run {
+            val model = getModel<List<BannerItemModel>>()
+            findView<BannerViewPager<BannerItemModel>>(R.id.banner).run {
+                if (model != data) {
+                    create(getModel())
+                }
+            }
+        }
+    }
+
+
+    private fun fetchData() {
         // 获取第一页数据,Banner 和 列表数据
         indexViewModel.indexFirstLiveData.observe(viewLifecycleOwner) { data ->
             binding.pageRefresh.showContent()
