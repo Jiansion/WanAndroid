@@ -13,15 +13,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         supportFragmentManager
             .beginTransaction()
             .replace(binding.container.id, IndexFragment())
             .commit()
-
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+
+    // 设置
+    override fun onBackPressed() {
+        val intent = Intent(Intent.ACTION_MAIN).apply {
+            flags = Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or Intent.FLAG_ACTIVITY_NEW_TASK
+            addCategory(Intent.CATEGORY_HOME)
+        }
+        startActivity(intent)
     }
 }
