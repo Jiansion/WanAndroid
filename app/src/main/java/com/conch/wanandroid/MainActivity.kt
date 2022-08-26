@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.conch.wanandroid.databinding.ActivityMainBinding
 import com.conch.wanandroid.ui.index.IndexFragment
+import com.conch.wanandroid.utils.log.LogCat
 
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(binding.container.id, IndexFragment())
             .commit()
+        LogCat.i("MainActivity onCreate")
     }
 
 

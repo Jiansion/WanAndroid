@@ -56,6 +56,9 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
+    // 启动优化
+    implementation "androidx.startup:startup-runtime:1.1.1"
+
     // 网络请求
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.github.liangjingkanji:Net:3.4.13'

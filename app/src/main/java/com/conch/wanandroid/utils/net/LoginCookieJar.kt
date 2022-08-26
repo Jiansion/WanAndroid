@@ -1,8 +1,8 @@
 package com.conch.wanandroid.utils.net
 
+import android.content.Context
 import com.conch.wanandroid.database.AppDatabase
 import com.conch.wanandroid.model.CookieModel
-import com.conch.wanandroid.utils.log.LogCat
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
@@ -11,8 +11,8 @@ import okhttp3.HttpUrl
  * @author YeJain
  * @date 2022/8/8 11:49
  */
-class LoginCookieJar : CookieJar {
-    private val dao = AppDatabase.db.cookieDao()
+class LoginCookieJar(val context: Context) : CookieJar {
+    private val dao = AppDatabase.getDB(context).cookieDao()
 
     // 在发送请求时添加 cookie，可返回一个为空 列表
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
@@ -31,7 +31,6 @@ class LoginCookieJar : CookieJar {
     private fun getCookies(url: HttpUrl): List<Cookie> {
         val list = mutableListOf<Cookie>()
         dao.gatByUrl(url = url.host).forEach { cookieModel ->
-            LogCat.i(cookieModel)
             Cookie.parse(url, cookieModel.cookie)?.let { cookie ->
                 if (cookie.expiresAt > System.currentTimeMillis()) {
                     list.add(cookie)
